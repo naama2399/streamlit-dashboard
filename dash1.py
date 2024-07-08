@@ -1,7 +1,6 @@
+import plotly
 import streamlit as st
 import pandas as pd
-import plotly
-
 # Load the datasets
 hiv_df = pd.read_csv('art_coverage_by_country_clean.csv')
 df = pd.read_csv('AIDS_Classification.csv')
