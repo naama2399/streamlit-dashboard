@@ -143,7 +143,6 @@ marker = st.selectbox(
 demographic_fig = plotly.graph_objs.Figure(data=plotly.graph_objs.Box(
     x=df[demographic],
     y=df[marker],
-    marker_color=df['trt'],
     name=f'{marker} by {demographic}'
 ))
 
