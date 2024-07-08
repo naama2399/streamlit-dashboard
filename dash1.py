@@ -1,7 +1,6 @@
-import os
-os.system('pip install plotly')
-
-import streamlit as st
+import dash
+from dash import dcc, html
+from dash.dependencies import Input, Output, State
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
@@ -11,7 +10,7 @@ hiv_df = pd.read_csv('art_coverage_by_country_clean.csv')
 df = pd.read_csv('AIDS_Classification.csv')
 
 # Clean column names by replacing non-breaking spaces with regular spaces
-hiv_df.columns = hiv_df.columns.str.replace('\xa0', ' ')
+hiv_df.columns = hiv_df.columns.str.replace('', ' ')
 
 # Sort the DataFrame
 hiv_df = hiv_df.sort_values(by='Reported number of people receiving ART', ascending=False)
@@ -35,106 +34,121 @@ def plot_map(df, col, pal):
                         title='ART Coverage by Country', color_continuous_scale=pal, width=1500)
     return fig
 
-# Streamlit app
-st.title("ART Coverage and AIDS Progression Analysis")
+# Initialize the Dash app
+app = dash.Dash(__name__)
 
-# Display ART coverage map
-st.header("ART Coverage by Country")
-fig_art_coverage = plot_map(hiv_df, 'Reported number of people receiving ART', 'matter')
-st.plotly_chart(fig_art_coverage)
+app.layout = html.Div([
+    html.H1("ART Coverage and AIDS Progression Analysis"),
+    
+    html.H2("ART Coverage by Country"),
+    dcc.Graph(id='art-coverage-map'),
+    
+    html.H2("AIDS Progression Analysis"),
+    html.Label("Select ART Protocol"),
+    dcc.Dropdown(
+        id='protocol-dropdown',
+        options=[
+            {'label': 'ZDV only', 'value': 0},
+            {'label': 'ZDV + ddI', 'value': 1},
+            {'label': 'ZDV + Zal', 'value': 2},
+            {'label': 'ddI only', 'value': 3}
+        ],
+        value=0
+    ),
+    dcc.Graph(id='cd4-cd8-graph'),
+    
+    html.Label("Select Patient Demographic"),
+    dcc.Dropdown(
+        id='demographic-dropdown',
+        options=[
+            {'label': 'Gender', 'value': 'gender'},
+            {'label': 'Race', 'value': 'race'}
+        ],
+        value='gender'
+    ),
+    html.Label("Select Clinical Marker"),
+    dcc.Dropdown(
+        id='marker-dropdown',
+        options=[
+            {'label': 'CD4 Count at Baseline', 'value': 'cd40'},
+            {'label': 'CD4 Count at 20 Weeks', 'value': 'cd420'},
+            {'label': 'CD8 Count at Baseline', 'value': 'cd80'},
+            {'label': 'CD8 Count at 20 Weeks', 'value': 'cd820'}
+        ],
+        value='cd40'
+    ),
+    dcc.Graph(id='demographic-graph'),
+    
+    dcc.Graph(id='survival-curve'),
+    dcc.Graph(id='infection-rate-bar')
+])
 
-# AIDS Progression Analysis
-st.header("AIDS Progression Analysis")
-
-# Create a selectbox for selecting ART protocol
-protocol = st.selectbox(
-    "Select ART Protocol",
-    options=[
-        {'label': 'ZDV only', 'value': 0},
-        {'label': 'ZDV + ddI', 'value': 1},
-        {'label': 'ZDV + Zal', 'value': 2},
-        {'label': 'ddI only', 'value': 3}
-    ],
-    format_func=lambda x: x['label']
-)['value']
-
-# Filter the dataframe based on the selected protocol
-filtered_df = df[df['trt'] == protocol]
-
-# Create traces for CD4 and CD8 at baseline and after 20 weeks
-traces = []
-
-traces.append(go.Scatter(
-    x=filtered_df.index,
-    y=filtered_df['cd40'],
-    mode='lines+markers',
-    name='CD4 Baseline'
-))
-
-traces.append(go.Scatter(
-    x=filtered_df.index,
-    y=filtered_df['cd420'],
-    mode='lines+markers',
-    name='CD4 at 20 weeks'
-))
-
-traces.append(go.Scatter(
-    x=filtered_df.index,
-    y=filtered_df['cd80'],
-    mode='lines+markers',
-    name='CD8 Baseline'
-))
-
-traces.append(go.Scatter(
-    x=filtered_df.index,
-    y=filtered_df['cd820'],
-    mode='lines+markers',
-    name='CD8 at 20 weeks'
-))
-
-layout = go.Layout(
-    title=f'Changes in CD4 and CD8 for Protocol {protocol}',
-    xaxis={'title': 'Patient Index'},
-    yaxis={'title': 'Count'},
-    hovermode='closest'
+@app.callback(
+    Output('art-coverage-map', 'figure'),
+    Input('art-coverage-map', 'id')
 )
+def update_map(_):
+    return plot_map(hiv_df, 'Reported number of people receiving ART', 'matter')
 
-fig = go.Figure(data=traces, layout=layout)
+@app.callback(
+    Output('cd4-cd8-graph', 'figure'),
+    Input('protocol-dropdown', 'value')
+)
+def update_cd4_cd8_graph(selected_protocol):
+    filtered_df = df[df['trt'] == selected_protocol]
 
-# Display the plot
-st.plotly_chart(fig)
+    traces = []
+    traces.append(go.Scatter(
+        x=filtered_df.index,
+        y=filtered_df['cd40'],
+        mode='lines+markers',
+        name='CD4 Baseline'
+    ))
+    traces.append(go.Scatter(
+        x=filtered_df.index,
+        y=filtered_df['cd420'],
+        mode='lines+markers',
+        name='CD4 at 20 weeks'
+    ))
+    traces.append(go.Scatter(
+        x=filtered_df.index,
+        y=filtered_df['cd80'],
+        mode='lines+markers',
+        name='CD8 Baseline'
+    ))
+    traces.append(go.Scatter(
+        x=filtered_df.index,
+        y=filtered_df['cd820'],
+        mode='lines+markers',
+        name='CD8 at 20 weeks'
+    ))
 
-# Additional dropdowns and graphs
-# Create a selectbox for selecting patient demographic
-demographic = st.selectbox(
-    "Select Patient Demographic",
-    options=[
-        {'label': 'Gender', 'value': 'gender'},
-        {'label': 'Race', 'value': 'race'}
-    ],
-    format_func=lambda x: x['label']
-)['value']
+    layout = go.Layout(
+        title=f'Changes in CD4 and CD8 for Protocol {selected_protocol}',
+        xaxis={'title': 'Patient Index'},
+        yaxis={'title': 'Count'},
+        hovermode='closest'
+    )
 
-# Create a selectbox for selecting clinical marker
-marker = st.selectbox(
-    "Select Clinical Marker",
-    options=[
-        {'label': 'CD4 Count at Baseline', 'value': 'cd40'},
-        {'label': 'CD4 Count at 20 Weeks', 'value': 'cd420'},
-        {'label': 'CD8 Count at Baseline', 'value': 'cd80'},
-        {'label': 'CD8 Count at 20 Weeks', 'value': 'cd820'}
-    ],
-    format_func=lambda x: x['label']
-)['value']
+    fig = go.Figure(data=traces, layout=layout)
+    return fig
 
-# Update demographic outcomes graph
-demographic_fig = px.box(df, x=demographic, y=marker, title=f'{marker} by {demographic}',
-                         labels={demographic: 'Demographic', marker: 'Clinical Marker'},
-                         color='trt',  # Add color based on ART protocols
-                         color_discrete_sequence=px.colors.qualitative.Set1)
-st.plotly_chart(demographic_fig)
+@app.callback(
+    Output('demographic-graph', 'figure'),
+    [Input('demographic-dropdown', 'value'),
+     Input('marker-dropdown', 'value')]
+)
+def update_demographic_graph(selected_demo, selected_marker):
+    demographic_fig = px.box(df, x=selected_demo, y=selected_marker, title=f'{selected_marker} by {selected_demo}',
+                             labels={selected_demo: 'Demographic', selected_marker: 'Clinical Marker'},
+                             color='trt',  # Add color based on ART protocols
+                             color_discrete_sequence=px.colors.qualitative.Set1)
+    return demographic_fig
 
-# Update survival curve
+@app.callback(
+    Output('survival-curve', 'figure'),
+    Input('protocol-dropdown', 'value')
+)
 def update_survival_curve(selected_protocol):
     fig_survival_curve = go.Figure()
 
@@ -164,10 +178,10 @@ def update_survival_curve(selected_protocol):
 
     return fig_survival_curve
 
-survival_curve_fig = update_survival_curve(protocol)
-st.plotly_chart(survival_curve_fig)
-
-# Update bar plot
+@app.callback(
+    Output('infection-rate-bar', 'figure'),
+    Input('protocol-dropdown', 'value')
+)
 def update_bar_plot(selected_protocol):
     filtered_df = df[df['trt'] == selected_protocol]
 
@@ -190,6 +204,6 @@ def update_bar_plot(selected_protocol):
 
     return bar_fig
 
-bar_plot_fig = update_bar_plot(protocol)
-st.plotly_chart(bar_plot_fig)
-
+# Run the app
+if __name__ == '__main__':
+    app.run_server(debug=True)
