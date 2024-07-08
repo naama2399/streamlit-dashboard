@@ -1,7 +1,7 @@
 import streamlit as st
 import pandas as pd
-import plotly.express as px
-import plotly.graph_objects as go
+# import plotly.express as px
+# import plotly.graph_objects as go
 
 # Load the datasets
 hiv_df = pd.read_csv('art_coverage_by_country_clean.csv')
