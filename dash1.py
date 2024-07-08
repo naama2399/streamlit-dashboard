@@ -1,7 +1,6 @@
 import streamlit as st
 import pandas as pd
-# import plotly.express as px
-import plotly.graph_objects as go
+import plotly
 
 # Load the datasets
 hiv_df = pd.read_csv('art_coverage_by_country_clean.csv')
@@ -26,10 +25,26 @@ def plot_map(df, col, pal):
     # Filter data where the specified column has values greater than 0
     df = df[df[col] > 0]
 
-    # Create choropleth map using Plotly Express
-    fig = px.choropleth(df, locations="Country", locationmode='country names',
-                        color=col, hover_name="Country",
-                        title='ART Coverage by Country', color_continuous_scale=pal, width=1500)
+    # Create choropleth map using Plotly
+    fig = plotly.graph_objs.Figure(data=plotly.graph_objs.Choropleth(
+        locations=df['Country'],
+        locationmode='country names',
+        z=df[col],
+        colorscale=pal,
+        text=df['Country'],
+        marker_line_color='darkgray',
+        marker_line_width=0.5,
+    ))
+
+    fig.update_layout(
+        title_text='ART Coverage by Country',
+        title_x=0.5,
+        geo=dict(
+            showframe=False,
+            showcoastlines=False,
+            projection_type='equirectangular'
+        )
+    )
     return fig
 
 # Streamlit app
@@ -61,42 +76,42 @@ filtered_df = df[df['trt'] == protocol]
 # Create traces for CD4 and CD8 at baseline and after 20 weeks
 traces = []
 
-traces.append(go.Scatter(
+traces.append(plotly.graph_objs.Scatter(
     x=filtered_df.index,
     y=filtered_df['cd40'],
     mode='lines+markers',
     name='CD4 Baseline'
 ))
 
-traces.append(go.Scatter(
+traces.append(plotly.graph_objs.Scatter(
     x=filtered_df.index,
     y=filtered_df['cd420'],
     mode='lines+markers',
     name='CD4 at 20 weeks'
 ))
 
-traces.append(go.Scatter(
+traces.append(plotly.graph_objs.Scatter(
     x=filtered_df.index,
     y=filtered_df['cd80'],
     mode='lines+markers',
     name='CD8 Baseline'
 ))
 
-traces.append(go.Scatter(
+traces.append(plotly.graph_objs.Scatter(
     x=filtered_df.index,
     y=filtered_df['cd820'],
     mode='lines+markers',
     name='CD8 at 20 weeks'
 ))
 
-layout = go.Layout(
+layout = plotly.graph_objs.Layout(
     title=f'Changes in CD4 and CD8 for Protocol {protocol}',
     xaxis={'title': 'Patient Index'},
     yaxis={'title': 'Count'},
     hovermode='closest'
 )
 
-fig = go.Figure(data=traces, layout=layout)
+fig = plotly.graph_objs.Figure(data=traces, layout=layout)
 
 # Display the plot
 st.plotly_chart(fig)
@@ -125,15 +140,24 @@ marker = st.selectbox(
 )['value']
 
 # Update demographic outcomes graph
-demographic_fig = px.box(df, x=demographic, y=marker, title=f'{marker} by {demographic}',
-                         labels={demographic: 'Demographic', marker: 'Clinical Marker'},
-                         color='trt',  # Add color based on ART protocols
-                         color_discrete_sequence=px.colors.qualitative.Set1)
+demographic_fig = plotly.graph_objs.Figure(data=plotly.graph_objs.Box(
+    x=df[demographic],
+    y=df[marker],
+    marker_color=df['trt'],
+    name=f'{marker} by {demographic}'
+))
+
+demographic_fig.update_layout(
+    title=f'{marker} by {demographic}',
+    xaxis_title='Demographic',
+    yaxis_title='Clinical Marker',
+)
+
 st.plotly_chart(demographic_fig)
 
 # Update survival curve
 def update_survival_curve(selected_protocol):
-    fig_survival_curve = go.Figure()
+    fig_survival_curve = plotly.graph_objs.Figure()
 
     # Calculate survival curves for each treatment group
     for treatment in df['trt'].unique():
@@ -152,8 +176,8 @@ def update_survival_curve(selected_protocol):
             survival_prob.append(current_prob)
 
         # Add survival curve to the plot
-        fig_survival_curve.add_trace(go.Scatter(x=sorted_times, y=survival_prob,
-                                                mode='lines', name=f'Treatment {treatment}'))
+        fig_survival_curve.add_trace(plotly.graph_objs.Scatter(x=sorted_times, y=survival_prob,
+                                                               mode='lines', name=f'Treatment {treatment}'))
 
     # Update layout of the figure
     fig_survival_curve.update_layout(title='Kaplan-Meier Survival Curves by ART Protocol',
@@ -168,11 +192,11 @@ st.plotly_chart(survival_curve_fig)
 def update_bar_plot(selected_protocol):
     filtered_df = df[df['trt'] == selected_protocol]
 
-    bar_fig = go.Figure()
+    bar_fig = plotly.graph_objs.Figure()
 
     variables = ['hemo', 'homo', 'drugs']
     for var in variables:
-        bar_fig.add_trace(go.Bar(
+        bar_fig.add_trace(plotly.graph_objs.Bar(
             x=filtered_df[var],
             y=filtered_df['infected'],
             name=f'Infected vs {var.capitalize()}',
