@@ -37,28 +37,9 @@ def plot_map(df, col, pal):
     df[col] = pd.to_numeric(df[col], errors='coerce')
 
     # Create choropleth map using Plotly Express
-    fig = px.choropleth(
-        df,
-        locations="Country",
-        locationmode='country names',
-        color=col,
-        hover_name="Country",
-        title='ART Coverage by Country',
-        color_continuous_scale=pal
-    )
-
-    fig.update_layout(
-        autosize=False,
-        width=1000,  # Increase width
-        height=600,  # Increase height
-        margin=dict(l=50, r=50, t=50, b=50),  # Adjust margins
-        geo=dict(
-            showframe=False,
-            showcoastlines=False,
-            projection_type='equirectangular'
-        )
-    )
-
+    fig = px.choropleth(df, locations="Country", locationmode='country names',
+                        color=col, hover_name="Country",
+                        title='ART Coverage by Country', color_continuous_scale=pal, width=800)
     return fig
 
 def update_cumulative_incidence_curve():
@@ -89,11 +70,9 @@ def update_cumulative_incidence_curve():
         ))
 
     # Update layout of the figure
-    fig_cumulative_incidence_curve.update_layout(
-        title='Cumulative Incidence Curves by ART Protocol',
-        xaxis_title='Time (days)',
-        yaxis_title='Cumulative Proportion of Deaths'
-    )
+    fig_cumulative_incidence_curve.update_layout(title='Cumulative Incidence Curves by ART Protocol',
+                                                 xaxis_title='Time (days)',
+                                                 yaxis_title='Cumulative Proportion of Deaths')
 
     return fig_cumulative_incidence_curve
 
