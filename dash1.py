@@ -94,12 +94,8 @@ st.image("picture_vizu.jpeg", width=1000)
 # Add a title for your project
 st.title("Analyzing the Impact of ART Protocols on AIDS Progression")
 
-# Create columns to center the map
-col1, col2, col3 = st.columns([1, 6, 1])
-with col2:
-    st.header("ART Coverage by Country")
-    fig_art_coverage = plot_map(hiv_df, 'Reported number of people receiving ART', 'matter')
-    st.plotly_chart(fig_art_coverage)
+fig_art_coverage = plot_map(hiv_df, 'Reported number of people receiving ART', 'matter')
+st.plotly_chart(fig_art_coverage)
 
 # AIDS Progression Analysis
 st.header("AIDS Progression Analysis")
