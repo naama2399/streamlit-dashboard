@@ -95,11 +95,13 @@ def update_cumulative_incidence_curve():
     return fig_cumulative_incidence_curve
 
 # Streamlit app
-# Add a main image with a larger width
-st.image("picture_vizu.jpeg", width=1500)
-
 # Add a title for your project
 st.title("Analyzing the Impact of ART Protocols on AIDS Progression")
+
+# Center the main image with a larger width
+col1, col2, col3 = st.columns([1, 3, 1])
+with col2:
+    st.image("picture_vizu.jpeg", width=1200)
 
 fig_art_coverage = plot_map(hiv_df, 'Reported number of people receiving ART', 'matter')
 st.plotly_chart(fig_art_coverage, use_container_width=True)
