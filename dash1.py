@@ -1,6 +1,17 @@
+import pandas as pd
 import plotly.express as px
 
+# Load the dataset
+hiv_df = pd.read_csv('art_coverage_by_country_clean.csv')
+
+# Clean column names by replacing non-breaking spaces with regular spaces
+hiv_df.columns = hiv_df.columns.str.replace('\xa0', ' ')
+
+# Define the function to plot the map
 def plot_map(df, col, pal):
+    # Convert col to numeric type if necessary
+    df[col] = pd.to_numeric(df[col], errors='coerce')
+
     # Create choropleth map using Plotly Express
     fig = px.choropleth(df, locations="Country", locationmode='country names',
                         color=col, hover_name="Country",
@@ -22,6 +33,6 @@ def plot_map(df, col, pal):
     )
     return fig
 
-# Assuming hiv_df is your dataframe and 'Reported number of people receiving ART' is the column you want to plot
+# Plot the map
 fig_art_coverage = plot_map(hiv_df, 'Reported number of people receiving ART', 'matter')
 fig_art_coverage.show()
