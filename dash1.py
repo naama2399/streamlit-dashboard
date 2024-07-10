@@ -40,3 +40,4 @@ st.header("ART Coverage by Country")
 
 fig_art_coverage = plot_map(hiv_df, 'Reported number of people receiving ART', 'matter')
 st.plotly_chart(fig_art_coverage)
+fig.show()
