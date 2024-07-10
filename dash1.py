@@ -54,8 +54,7 @@ fig.update_layout(
         thicknessmode="pixels", thickness=15,
         lenmode="pixels", len=300,
         yanchor="middle", y=0.5,
-        ticks="outside"
-    )
+        ticks="outside" )
     )
     return fig
 
