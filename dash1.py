@@ -42,7 +42,7 @@ def plot_map(df, col, pal):
     # Create choropleth map using Plotly Express
     fig = px.choropleth(df, locations="Country", locationmode='country names',
                         color=col, hover_name="Country",
-                        title='ART Coverage by Country', color_continuous_scale=pal, width=1500, height=800)
+                        title='ART Coverage by Country', color_continuous_scale=pal, width=1500, height=1200)
     fig.update_layout(
         autosize=False,
         width=1500,
