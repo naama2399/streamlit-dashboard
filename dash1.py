@@ -31,17 +31,6 @@ treatment_names = {
     2: 'ZDV + Zal',
     3: 'ddI only'
 }
-#
-# def plot_map(df, col, pal):
-#     # Convert col to numeric type if necessary
-#     df[col] = pd.to_numeric(df[col], errors='coerce')
-#
-#     # Create choropleth map using Plotly Express
-#     fig = px.choropleth(df, locations="Country", locationmode='country names',
-#                         color=col, hover_name="Country",
-#                         title='ART Coverage by Country', color_continuous_scale=pal, width=800)
-#     return fig
-
 def plot_map(df, col, pal):
     # Convert col to numeric type if necessary
     df[col] = pd.to_numeric(df[col], errors='coerce')
@@ -49,7 +38,7 @@ def plot_map(df, col, pal):
     # Create choropleth map using Plotly Express
     fig = px.choropleth(df, locations="Country", locationmode='country names',
                         color=col, hover_name="Country",
-                        title='ART Coverage by Country', color_continuous_scale=pal,width=1600)
+                        title='ART Coverage by Country', color_continuous_scale=pal,width=1200)
     return fig
 
 
