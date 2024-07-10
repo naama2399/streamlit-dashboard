@@ -15,7 +15,7 @@ df = pd.read_csv('AIDS_Classification.csv')
 print(df.isna().sum())
 
 # Clean column names by replacing non-breaking spaces with regular spaces
-hiv_df.columns = hiv_df.columns.str.replace('\xa0', ' ')
+hiv_df.columns = hiv_df.columns.str_replace('\xa0', ' ')
 
 # Get a list of all countries from Plotly's gapminder dataset
 all_countries = px.data.gapminder()['country'].unique()
@@ -48,6 +48,7 @@ def plot_map(df, col, pal):
         width=1500,
         height=800,
         margin={"r":0,"t":50,"l":0,"b":0},  # Adjusted margin settings
+        title_font_size=35,  # Adjust the title font size here
         coloraxis_colorbar=dict(
             title="Reported number of people receiving ART",
             thicknessmode="pixels", thickness=15,
@@ -103,7 +104,7 @@ st.title("Analyzing the Impact of ART Protocols on AIDS Progression")
 st.image("picture_vizu.jpeg", width=1200)
 
 # Add text before the map
-st.write("This graph shows antiretroviral therapy (ART) coverage by country around the world. The data shows the reported number of people receiving ART in each country.")
+st.markdown("## This graph shows antiretroviral therapy (ART) coverage by country around the world. The data shows the reported number of people receiving ART in each country.")
 
 fig_art_coverage = plot_map(hiv_df, 'Reported number of people receiving ART', 'matter')
 st.plotly_chart(fig_art_coverage, use_container_width=True)
@@ -112,6 +113,7 @@ st.plotly_chart(fig_art_coverage, use_container_width=True)
 st.header("AIDS Progression Analysis")
 
 # Create a selectbox for selecting ART protocol
+st.markdown("Please select an ART Protocol to see the analysis.")
 protocol = st.selectbox(
     "Select ART Protocol",
     options=[
@@ -127,6 +129,7 @@ protocol = st.selectbox(
 filtered_df = df[df['trt'] == protocol]
 
 # Add a selectbox for CD4 or CD8
+st.markdown("Please select a type of white blood cell to see the scatter plot.")
 marker_type = st.selectbox(
     "Choose a type of white blood cell",
     options=[
@@ -180,10 +183,12 @@ st.plotly_chart(scatter_fig, use_container_width=True)
 
 # Display cumulative incidence curve
 st.header("Cumulative Incidence Analysis")
+st.markdown("This graph shows the cumulative incidence curves for different ART protocols.")
 fig_cumulative_incidence_curve = update_cumulative_incidence_curve()
 st.plotly_chart(fig_cumulative_incidence_curve, use_container_width=True)
 
 # Add a selectbox for clinical variables
+st.markdown("Please select a clinical variable to see the infection rate.")
 clinical_variable = st.selectbox(
     "Select Clinical Variable",
     options=[
@@ -237,10 +242,10 @@ def update_bar_plot(selected_protocol, variable):
 
     return bar_fig
 
+st.markdown("This graph shows the infection rate versus the selected clinical variable.")
 bar_plot_fig = update_bar_plot(protocol, clinical_variable)
 st.plotly_chart(bar_plot_fig, use_container_width=True)
 
 # Add footer
 st.markdown("<br><br><br>", unsafe_allow_html=True)
 st.markdown("<center>Created by Naama Maimon & Stav Barak</center>", unsafe_allow_html=True)
-
