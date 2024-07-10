@@ -96,7 +96,7 @@ def update_cumulative_incidence_curve():
 
 # Streamlit app
 # Add a main image with a larger width
-st.image("picture_vizu.jpeg", width=1500)
+st.image("picture_vizu.jpeg", width=1200)
 
 # Add a title for your project
 st.title("Analyzing the Impact of ART Protocols on AIDS Progression")
