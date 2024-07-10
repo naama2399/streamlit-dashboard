@@ -37,9 +37,28 @@ def plot_map(df, col, pal):
     df[col] = pd.to_numeric(df[col], errors='coerce')
 
     # Create choropleth map using Plotly Express
-    fig = px.choropleth(df, locations="Country", locationmode='country names',
-                        color=col, hover_name="Country",
-                        title='ART Coverage by Country', color_continuous_scale=pal, width=800)
+    fig = px.choropleth(
+        df,
+        locations="Country",
+        locationmode='country names',
+        color=col,
+        hover_name="Country",
+        title='ART Coverage by Country',
+        color_continuous_scale=pal,
+        width=1000,  # Increase width
+        height=800  # Increase height
+    )
+
+    fig.update_layout(
+        autosize=False,
+        margin=dict(l=50, r=50, t=50, b=50),  # Adjust margins
+        geo=dict(
+            showframe=False,
+            showcoastlines=False,
+            projection_type='equirectangular'
+        )
+    )
+
     return fig
 
 def update_cumulative_incidence_curve():
@@ -70,11 +89,13 @@ def update_cumulative_incidence_curve():
         ))
 
     # Update layout of the figure
-    fig_cumulative_incidence_curve.update_layout(title='Cumulative Incidence Curves by ART Protocol',
-                                                 xaxis_title='Time (days)',
-                                                 yaxis_title='Cumulative Proportion of Deaths')
+    fig_cumulative_incidence_curve.update_layout(
+        title='Cumulative Incidence Curves by ART Protocol',
+        xaxis_title='Time (days)',
+        yaxis_title='Cumulative Proportion of Deaths'
+    )
 
-    return fig_cumulative_incidence_curve
+    return fig
 
 # Streamlit app
 # Add a main image with a larger width
@@ -84,11 +105,11 @@ st.image("picture_vizu.jpeg", width=1000)
 st.title("Analyzing the Impact of ART Protocols on AIDS Progression")
 
 # Create columns to center the map
-# col1, col2, col3 = st.columns([1, 6, 1])
-# with col2:
-#     st.header("ART Coverage by Country")
-#     fig_art_coverage = plot_map(hiv_df, 'Reported number of people receiving ART', 'matter')
-#     st.plotly_chart(fig_art_coverage)
+col1, col2, col3 = st.columns([1, 6, 1])
+with col2:
+    st.header("ART Coverage by Country")
+    fig_art_coverage = plot_map(hiv_df, 'Reported number of people receiving ART', 'matter')
+    st.plotly_chart(fig_art_coverage)
 
 # AIDS Progression Analysis
 st.header("AIDS Progression Analysis")
