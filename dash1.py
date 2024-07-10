@@ -242,4 +242,5 @@ st.plotly_chart(bar_plot_fig, use_container_width=True)
 
 # Add footer
 st.markdown("<br><br><br>", unsafe_allow_html=True)
-st.markdown("<center>Created by Naama Maimon & Stav Barak</center
+st.markdown("<center>Created by Naama Maimon & Stav Barak</center>", unsafe_allow_html=True)
+
