@@ -88,7 +88,7 @@ st.title("Analyzing the Impact of ART Protocols on AIDS Progression")
 
 
 # Add a main image with a larger width
-st.image("picture_vizu.jpeg", width=1500,use_column_width='always')
+st.image("picture_vizu.jpeg", width=1000,use_column_width='always')
 
 fig_art_coverage = plot_map(hiv_df, 'Reported number of people receiving ART', 'matter')
 st.plotly_chart(fig_art_coverage, use_container_width=True)
