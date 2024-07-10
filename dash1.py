@@ -42,10 +42,10 @@ def plot_map(df, col, pal):
     # Create choropleth map using Plotly Express
     fig = px.choropleth(df, locations="Country", locationmode='country names',
                         color=col, hover_name="Country",
-                        title='ART Coverage by Country', color_continuous_scale=pal, width=1200, height=700)
+                        title='ART Coverage by Country', color_continuous_scale=pal, width=1000, height=700)
     fig.update_layout(
         autosize=False,
-        width=1200,
+        width=1000,
         height=700,
         margin={"r":0,"t":0,"l":0,"b":0},
         coloraxis_colorbar=dict(
@@ -90,7 +90,7 @@ def update_cumulative_incidence_curve():
                                                  xaxis_title='Time (days)',
                                                  yaxis_title='Cumulative Proportion of Deaths',
                                                  autosize=False,
-                                                 width=1200,
+                                                 width=1000,
                                                  height=700)
     return fig_cumulative_incidence_curve
 
@@ -101,7 +101,7 @@ st.title("Analyzing the Impact of ART Protocols on AIDS Progression")
 
 
 # Add a main image with a larger width
-st.image("picture_vizu.jpeg", width=1200)
+st.image("picture_vizu.jpeg", width=1400)
 
 
 
@@ -169,7 +169,7 @@ scatter_layout = go.Layout(
     },
     hovermode='closest',
     autosize=False,
-    width=1200,
+    width=1000,
     height=700
 )
 
@@ -231,7 +231,7 @@ def update_bar_plot(selected_protocol, variable):
         xaxis_title=variable.capitalize(),
         yaxis_title='Number of People Infected with AIDS',
         autosize=False,
-        width=1200,
+        width=1000,
         height=700
     )
 
