@@ -42,9 +42,11 @@ def plot_map(df, col, pal):
     # Create choropleth map using Plotly Express
     fig = px.choropleth(df, locations="Country", locationmode='country names',
                         color=col, hover_name="Country",
-                        title='ART Coverage by Country', color_continuous_scale=pal)
+                        title='ART Coverage by Country', color_continuous_scale=pal, width=1200, height=700)
     fig.update_layout(
         autosize=False,
+        width=1200,
+        height=700,
         margin={"r":0,"t":0,"l":0,"b":0},
         coloraxis_colorbar=dict(
             title="Reported number of people receiving ART",
@@ -87,15 +89,17 @@ def update_cumulative_incidence_curve():
     fig_cumulative_incidence_curve.update_layout(title='Cumulative Incidence Curves by ART Protocol',
                                                  xaxis_title='Time (days)',
                                                  yaxis_title='Cumulative Proportion of Deaths',
-                                                 autosize=False)
+                                                 autosize=False,
+                                                 width=1200,
+                                                 height=700)
     return fig_cumulative_incidence_curve
 
 # Streamlit app
 # Add a title for your project
 st.title("Analyzing the Impact of ART Protocols on AIDS Progression")
 
-# Center the main image with a smaller width
-st.image("picture_vizu.jpeg", width=900)
+# Add a main image with a larger width
+st.image("picture_vizu.jpeg", width=1200)
 
 fig_art_coverage = plot_map(hiv_df, 'Reported number of people receiving ART', 'matter')
 st.plotly_chart(fig_art_coverage, use_container_width=True)
@@ -160,7 +164,9 @@ scatter_layout = go.Layout(
         'tickformat': ','
     },
     hovermode='closest',
-    autosize=False
+    autosize=False,
+    width=1200,
+    height=700
 )
 
 scatter_fig = go.Figure(data=scatter_traces, layout=scatter_layout)
@@ -220,7 +226,9 @@ def update_bar_plot(selected_protocol, variable):
         title=f'Infection Rate vs {variable.capitalize()}',
         xaxis_title=variable.capitalize(),
         yaxis_title='Number of People Infected with AIDS',
-        autosize=False
+        autosize=False,
+        width=1200,
+        height=700
     )
 
     return bar_fig
