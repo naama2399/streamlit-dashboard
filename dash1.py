@@ -5,7 +5,11 @@ import plotly.express as px
 
 # Load the datasets
 hiv_df = pd.read_csv('art_coverage_by_country_clean.csv')
+missing_values_count = hiv_df['Reported number of people receiving ART'].isna().sum()
+print(missing_values_count)
+
 df = pd.read_csv('AIDS_Classification.csv')
+print(df.isna().sum())
 
 # Clean column names by replacing non-breaking spaces with regular spaces
 hiv_df.columns = hiv_df.columns.str.replace('\xa0', ' ')
@@ -20,6 +24,14 @@ hiv_df = pd.merge(all_countries_df, hiv_df, on='Country', how='left').fillna(0)
 # Create binary columns for each treatment type
 df = pd.concat([df, pd.get_dummies(df['trt'], prefix='protocol').astype(int)], axis=1)
 
+# Define treatment names
+treatment_names = {
+    0: 'ZDV only',
+    1: 'ZDV + ddI',
+    2: 'ZDV + Zal',
+    3: 'ddI only'
+}
+
 def plot_map(df, col, pal):
     # Convert col to numeric type if necessary
     df[col] = pd.to_numeric(df[col], errors='coerce')
@@ -28,12 +40,10 @@ def plot_map(df, col, pal):
     fig = px.choropleth(df, locations="Country", locationmode='country names',
                         color=col, hover_name="Country",
                         title='ART Coverage by Country', color_continuous_scale=pal)
-
     fig.update_geos(projection_type="natural earth", showcountries=True, countrycolor="Black",
                     showcoastlines=True, coastlinecolor="Black",
                     showland=True, landcolor="lightgray",
                     showocean=True, oceancolor="lightblue")
-
     fig.update_layout(width=1000, height=600, margin={"r":0,"t":50,"l":0,"b":0})
     return fig
 
@@ -57,8 +67,12 @@ def update_cumulative_incidence_curve():
             cumulative_incidence.append(cumulative_prob)
 
         # Add cumulative incidence curve to the plot
-        fig_cumulative_incidence_curve.add_trace(go.Scatter(x=sorted_times, y=cumulative_incidence,
-                                                            mode='lines', name=f'Treatment {treatment}'))
+        fig_cumulative_incidence_curve.add_trace(go.Scatter(
+            x=sorted_times,
+            y=cumulative_incidence,
+            mode='lines',
+            name=f'Treatment {treatment}: {treatment_names[treatment]}'
+        ))
 
     # Update layout of the figure
     fig_cumulative_incidence_curve.update_layout(title='Cumulative Incidence Curves by ART Protocol',
@@ -68,12 +82,18 @@ def update_cumulative_incidence_curve():
     return fig_cumulative_incidence_curve
 
 # Streamlit app
-st.title("ART Coverage and AIDS Progression Analysis")
+# Add a main image with a larger width
+st.image("picture_vizu.jpeg", width=1000)
 
-# Display ART coverage map
-st.header("ART Coverage by Country")
-fig_art_coverage = plot_map(hiv_df, 'Reported number of people receiving ART', 'matter')
-st.plotly_chart(fig_art_coverage)
+# Add a title for your project
+st.title("Analyzing the Impact of ART Protocols on AIDS Progression")
+
+# Create columns to center the map
+col1, col2, col3 = st.columns([1, 6, 1])
+with col2:
+    st.header("ART Coverage by Country")
+    fig_art_coverage = plot_map(hiv_df, 'Reported number of people receiving ART', 'matter')
+    st.plotly_chart(fig_art_coverage)
 
 # AIDS Progression Analysis
 st.header("AIDS Progression Analysis")
@@ -200,3 +220,7 @@ def update_bar_plot(selected_protocol, variable):
 
 bar_plot_fig = update_bar_plot(protocol, clinical_variable)
 st.plotly_chart(bar_plot_fig)
+
+# Add footer
+st.markdown("<br><br><br>", unsafe_allow_html=True)
+st.markdown("<center>Created by Naama Maimon & Stav Barak</center>", unsafe_allow_html=True)
