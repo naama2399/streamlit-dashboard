@@ -28,13 +28,10 @@ def plot_map(df, col, pal):
     fig = px.choropleth(df, locations="Country", locationmode='country names',
                         color=col, hover_name="Country",
                         title='ART Coverage by Country', color_continuous_scale=pal)
-
-    fig.update_geos(projection_type="natural earth", showcountries=True, countrycolor="Black",
-                    showcoastlines=True, coastlinecolor="Black",
-                    showland=True, landcolor="lightgray",
-                    showocean=True, oceancolor="lightblue")
-
-    fig.update_layout(width=1000, height=600, margin={"r":0,"t":50,"l":0,"b":0})
+    
+    # Adjust projection and scale to make the countries appear larger
+    fig.update_geos(projection_scale=1.2)  # Increase this value to enlarge the map
+    fig.update_layout(width=1500, height=800, margin={"r":0,"t":50,"l":0,"b":0})
     return fig
 
 def update_cumulative_incidence_curve():
