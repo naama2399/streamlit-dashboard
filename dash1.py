@@ -43,19 +43,7 @@ def plot_map(df, col, pal):
     fig = px.choropleth(df, locations="Country", locationmode='country names',
                         color=col, hover_name="Country",
                         title='ART Coverage by Country', color_continuous_scale=pal, width=1500, height=800)
-    fig.update_layout(
-        autosize=False,
-        width=1500,
-        height=800,
-        margin={"r":0,"t":0,"l":0,"b":0},
-        coloraxis_colorbar=dict(
-            title="Reported number of people receiving ART",
-            thicknessmode="pixels", thickness=15,
-            lenmode="pixels", len=300,
-            yanchor="middle", y=0.5,
-            ticks="outside"
-        )
-    )
+
     return fig
 
 def update_cumulative_incidence_curve():
@@ -98,10 +86,9 @@ def update_cumulative_incidence_curve():
 # Add a title for your project
 st.title("Analyzing the Impact of ART Protocols on AIDS Progression")
 
-# Center the main image with a larger width
-col1, col2, col3 = st.columns([1, 3, 1])
-with col2:
-    st.image("picture_vizu.jpeg", width=1200)
+
+# Add a main image with a larger width
+st.image("picture_vizu.jpeg", width=1500,use_column_width='always')
 
 fig_art_coverage = plot_map(hiv_df, 'Reported number of people receiving ART', 'matter')
 st.plotly_chart(fig_art_coverage, use_container_width=True)
