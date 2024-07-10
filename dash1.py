@@ -20,59 +20,36 @@ hiv_df = pd.merge(all_countries_df, hiv_df, on='Country', how='left').fillna(0)
 # Create binary columns for each treatment type
 df = pd.concat([df, pd.get_dummies(df['trt'], prefix='protocol').astype(int)], axis=1)
 
+
 def plot_map(df, col, pal):
     # Convert col to numeric type if necessary
     df[col] = pd.to_numeric(df[col], errors='coerce')
 
-    # Create choropleth map using Plotly Express
-    fig = px.choropleth(df, locations="Country", locationmode='country names',
-                        color=col, hover_name="Country",
-                        title='ART Coverage by Country', color_continuous_scale=pal)
-    
-    # Adjust the layout to make the countries appear larger
-    fig.update_geos(
-        projection_type="natural earth",
-        projection_scale=1.7,  # Increase this value to make countries larger
-        center=dict(lat=0, lon=0)
-    )
-    
+    # Drop rows where col is NaN
+    df = df.dropna(subset=[col])
+
+    # Create choropleth map using Plotly
+    fig = go.Figure(data=go.Choropleth(
+        locations=df['Country'],
+        locationmode='country names',
+        z=df[col],
+        colorscale=pal,
+        text=df['Country'],
+        marker_line_color='darkgray',
+        marker_line_width=0.5,
+    ))
+
     fig.update_layout(
-        width=1200,  # Adjust this value to fit the Streamlit app layout
-        height=800,  # Adjust this value to change the aspect ratio
-        margin={"r":0,"t":50,"l":0,"b":0}
+        title_text='ART Coverage by Country',
+        title_x=0.5,
+        geo=dict(
+            showframe=False,
+            showcoastlines=False,
+            projection_type='equirectangular'
+        )
     )
-    
     return fig
 
-def update_cumulative_incidence_curve():
-    fig_cumulative_incidence_curve = go.Figure()
-
-    # Calculate cumulative incidence for each treatment group
-    for treatment in df['trt'].unique():
-        treatment_data = df[df['trt'] == treatment]
-        sorted_times = sorted(treatment_data['time'].unique())
-        cumulative_incidence = []
-        num_patients = len(treatment_data)
-
-        # Calculate cumulative incidence for each time point
-        cumulative_prob = 0.0
-        for t in sorted_times:
-            patients_at_time_t = treatment_data[treatment_data['time'] >= t]
-            num_patients_at_time_t = len(patients_at_time_t)
-            num_events_at_time_t = sum(patients_at_time_t['infected'])
-            cumulative_prob += num_events_at_time_t / num_patients
-            cumulative_incidence.append(cumulative_prob)
-
-        # Add cumulative incidence curve to the plot
-        fig_cumulative_incidence_curve.add_trace(go.Scatter(x=sorted_times, y=cumulative_incidence,
-                                                            mode='lines', name=f'Treatment {treatment}'))
-
-    # Update layout of the figure
-    fig_cumulative_incidence_curve.update_layout(title='Cumulative Incidence Curves by ART Protocol',
-                                                 xaxis_title='Time (days)',
-                                                 yaxis_title='Cumulative Proportion of Deaths')
-
-    return fig_cumulative_incidence_curve
 
 # Streamlit app
 st.title("ART Coverage and AIDS Progression Analysis")
@@ -102,7 +79,7 @@ filtered_df = df[df['trt'] == protocol]
 
 # Add a selectbox for CD4 or CD8
 marker_type = st.selectbox(
-    "Choose a type of white blood cell",
+    "Select Marker Type",
     options=[
         {'label': 'CD4', 'value': 'CD4'},
         {'label': 'CD8', 'value': 'CD8'}
@@ -149,61 +126,111 @@ scatter_fig = go.Figure(data=scatter_traces, layout=scatter_layout)
 # Display the scatter plot
 st.plotly_chart(scatter_fig)
 
-# Display cumulative incidence curve
-st.header("Cumulative Incidence Analysis")
-fig_cumulative_incidence_curve = update_cumulative_incidence_curve()
-st.plotly_chart(fig_cumulative_incidence_curve)
-
-# Add a selectbox for clinical variables
-clinical_variable = st.selectbox(
-    "Select Clinical Variable",
+# Additional dropdowns and graphs
+# Create a selectbox for selecting patient demographic
+demographic = st.selectbox(
+    "Select Patient Demographic",
     options=[
-        {'label': 'hemophilia', 'value': 'hemo'},
-        {'label': 'Homosexuality', 'value': 'homo'},
-        {'label': 'Drug Use', 'value': 'drugs'},
         {'label': 'Gender', 'value': 'gender'},
         {'label': 'Race', 'value': 'race'}
     ],
     format_func=lambda x: x['label']
 )['value']
 
-# Display explanation based on the selected variable
-if clinical_variable == 'hemo':
-    st.write("0: Not with hemophilia")
-    st.write("1: With hemophilia")
-elif clinical_variable == 'homo':
-    st.write("0: Not homosexual")
-    st.write("1: Homosexual")
-elif clinical_variable == 'drugs':
-    st.write("0: Not a drug user")
-    st.write("1: Drug user")
-elif clinical_variable == 'gender':
-    st.write("0: Female")
-    st.write("1: Male")
-elif clinical_variable == 'race':
-    st.write("0: Other")
-    st.write("1: White")
+# Create a selectbox for selecting clinical marker
+marker = st.selectbox(
+    "Select Clinical Marker",
+    options=[
+        {'label': 'CD4 Count at Baseline', 'value': 'cd40'},
+        {'label': 'CD4 Count at 20 Weeks', 'value': 'cd420'},
+        {'label': 'CD8 Count at Baseline', 'value': 'cd80'},
+        {'label': 'CD8 Count at 20 Weeks', 'value': 'cd820'}
+    ],
+    format_func=lambda x: x['label']
+)['value']
+
+# Update demographic outcomes graph
+demographic_fig = go.Figure(data=go.Box(
+    x=df[demographic],
+    y=df[marker],
+    name=f'{marker} by {demographic}'
+))
+
+demographic_fig.update_layout(
+    title=f'{marker} by {demographic}',
+    xaxis_title='Demographic',
+    yaxis_title='Clinical Marker',
+    yaxis=dict(tickformat=',')
+)
+
+st.plotly_chart(demographic_fig)
+
+
+# Update survival curve
+def update_survival_curve(selected_protocol):
+    fig_survival_curve = go.Figure()
+
+    # Calculate survival curves for each treatment group
+    for treatment in df['trt'].unique():
+        treatment_data = df[df['trt'] == treatment]
+        sorted_times = sorted(treatment_data['time'].unique())
+        survival_prob = []
+        num_patients = len(treatment_data)
+
+        # Calculate survival probability for each time point
+        current_prob = 1.0
+        for t in sorted_times:
+            patients_at_time_t = treatment_data[treatment_data['time'] >= t]
+            num_patients_at_time_t = len(patients_at_time_t)
+            num_events_at_time_t = sum(patients_at_time_t['infected'])
+            current_prob *= (1.0 - 1.0 * num_events_at_time_t / num_patients_at_time_t)
+            survival_prob.append(current_prob)
+
+        # Add survival curve to the plot
+        fig_survival_curve.add_trace(go.Scatter(x=sorted_times, y=survival_prob,
+                                                mode='lines', name=f'Treatment {treatment}'))
+
+    # Update layout of the figure
+    fig_survival_curve.update_layout(
+        title='Kaplan-Meier Survival Curves by ART Protocol',
+        xaxis_title='Time (days)',
+        yaxis_title='Survival Probability',
+        xaxis=dict(tickformat=','),
+        yaxis=dict(tickformat=',')
+    )
+
+    return fig_survival_curve
+
+
+survival_curve_fig = update_survival_curve(protocol)
+st.plotly_chart(survival_curve_fig)
+
 
 # Update bar plot
-def update_bar_plot(selected_protocol, variable):
+def update_bar_plot(selected_protocol):
     filtered_df = df[df['trt'] == selected_protocol]
 
     bar_fig = go.Figure()
 
-    bar_fig.add_trace(go.Bar(
-        x=filtered_df[variable],
-        y=filtered_df['infected'],
-        name=f'Infected vs {variable.capitalize()}',
-    ))
+    variables = ['hemo', 'homo', 'drugs']
+    for var in variables:
+        bar_fig.add_trace(go.Bar(
+            x=filtered_df[var],
+            y=filtered_df['infected'],
+            name=f'Infected vs {var.capitalize()}',
+        ))
 
     bar_fig.update_layout(
         barmode='group',
-        title=f'Infection Rate vs {variable.capitalize()}',
-        xaxis_title=variable.capitalize(),
-        yaxis_title='Number of People Infected with AIDS'
+        title='Infection Rate vs Clinical Factors',
+        xaxis_title='Clinical Factors',
+        yaxis_title='Infected',
+        xaxis=dict(tickformat=','),
+        yaxis=dict(tickformat=',')
     )
 
     return bar_fig
 
-bar_plot_fig = update_bar_plot(protocol, clinical_variable)
+
+bar_plot_fig = update_bar_plot(protocol)
 st.plotly_chart(bar_plot_fig)
