@@ -3,8 +3,8 @@ import pandas as pd
 import plotly.graph_objs as go
 import plotly.express as px
 
-# Set the page layout to wide
-st.set_page_config(layout="wide")
+# # Set the page layout to wide
+# st.set_page_config(layout="wide")
 
 # Load the datasets
 hiv_df = pd.read_csv('art_coverage_by_country_clean.csv')
