@@ -45,8 +45,8 @@ def plot_map(df, col, pal):
         hover_name="Country",
         title='ART Coverage by Country',
         color_continuous_scale=pal,
-        width=500,  # Increase width
-        height=600  # Increase height
+        width=1200,  # Increase width
+        height=1200  # Increase height
     )
 
     fig.update_layout(
