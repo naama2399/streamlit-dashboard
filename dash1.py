@@ -94,8 +94,8 @@ def update_cumulative_incidence_curve():
 # Add a title for your project
 st.title("Analyzing the Impact of ART Protocols on AIDS Progression")
 
-# Center the main image
-st.image("picture_vizu.jpeg", width=600, use_column_width='always')
+# Center the main image with a smaller width
+st.image("picture_vizu.jpeg", width=900)
 
 fig_art_coverage = plot_map(hiv_df, 'Reported number of people receiving ART', 'matter')
 st.plotly_chart(fig_art_coverage, use_container_width=True)
