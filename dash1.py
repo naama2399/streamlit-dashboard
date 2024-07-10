@@ -39,7 +39,7 @@ def plot_map(df, col, pal):
     # Create choropleth map using Plotly Express
     fig = px.choropleth(df, locations="Country", locationmode='country names',
                         color=col, hover_name="Country",
-                        title='ART Coverage by Country', color_continuous_scale=pal, width=800)
+                        title='ART Coverage by Country', color_continuous_scale=pal, width=1200, height=600)
     return fig
 
 def update_cumulative_incidence_curve():
@@ -70,11 +70,13 @@ def update_cumulative_incidence_curve():
         ))
 
     # Update layout of the figure
-    fig_cumulative_incidence_curve.update_layout(title='Cumulative Incidence Curves by ART Protocol',
-                                                 xaxis_title='Time (days)',
-                                                 yaxis_title='Cumulative Proportion of Deaths')
+    fig_cumulative_incidence_curve.update_layout(
+        title='Cumulative Incidence Curves by ART Protocol',
+        xaxis_title='Time (days)',
+        yaxis_title='Cumulative Proportion of Deaths'
+    )
 
-    return fig_cumulative_incidence_curve
+    return fig
 
 # Streamlit app
 # Add a main image with a larger width
