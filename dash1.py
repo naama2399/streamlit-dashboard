@@ -103,7 +103,7 @@ st.title("Analyzing the Impact of ART Protocols on AIDS Progression")
 st.image("picture_vizu.jpeg", width=1200)
 
 # Add text before the map
-st.write("This graph shows antiretroviral therapy (ART) coverage by country around the world. The data shows the reported number of people receiving ART in each country.")
+st.markdown("## This graph shows antiretroviral therapy (ART) coverage by country around the world. The data shows the reported number of people receiving ART in each country.")
 
 fig_art_coverage = plot_map(hiv_df, 'Reported number of people receiving ART', 'matter')
 st.plotly_chart(fig_art_coverage, use_container_width=True)
