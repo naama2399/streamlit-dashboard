@@ -32,13 +32,13 @@ def plot_map(df, col, pal):
     # Adjust the layout to make the countries appear larger
     fig.update_geos(
         projection_type="natural earth",
-        projection_scale=1.5,  # Adjust this value to make countries larger
+        projection_scale=1.7,  # Increase this value to make countries larger
         center=dict(lat=0, lon=0)
     )
     
     fig.update_layout(
-        width=1000,  # Adjust this value to fit the Streamlit app layout
-        height=600,  # Adjust this value to change the aspect ratio
+        width=1200,  # Adjust this value to fit the Streamlit app layout
+        height=800,  # Adjust this value to change the aspect ratio
         margin={"r":0,"t":50,"l":0,"b":0}
     )
     
