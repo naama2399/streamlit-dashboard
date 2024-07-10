@@ -47,7 +47,7 @@ def plot_map(df, col, pal):
         autosize=False,
         width=1500,
         height=800,
-        margin={"r":0,"t":0,"l":0,"b":0},
+        margin={"r":0,"t":50,"l":0,"b":0},  # Adjusted margin settings
         coloraxis_colorbar=dict(
             title="Reported number of people receiving ART",
             thicknessmode="pixels", thickness=15,
@@ -102,9 +102,8 @@ st.title("Analyzing the Impact of ART Protocols on AIDS Progression")
 # Add a main image with a larger width
 st.image("picture_vizu.jpeg", width=1200)
 
-
 # Add text before the map
-# st.write("This graph shows antiretroviral therapy (ART) coverage by country around the world. The data shows the reported number of people receiving ART in each country.")
+st.write("This graph shows antiretroviral therapy (ART) coverage by country around the world. The data shows the reported number of people receiving ART in each country.")
 
 fig_art_coverage = plot_map(hiv_df, 'Reported number of people receiving ART', 'matter')
 st.plotly_chart(fig_art_coverage, use_container_width=True)
@@ -243,4 +242,4 @@ st.plotly_chart(bar_plot_fig, use_container_width=True)
 
 # Add footer
 st.markdown("<br><br><br>", unsafe_allow_html=True)
-st.markdown("<center>Created by Naama Maimon & Stav Barak</center>", unsafe_allow_html=True)
+st.markdown("<center>Created by Naama Maimon & Stav Barak</center
