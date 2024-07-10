@@ -21,8 +21,8 @@ def plot_map(df, col, pal):
     # Update layout to adjust the size of the map itself
     fig.update_layout(
         autosize=False,
-        width=1200,  # Increase the width
-        height=800,  # Increase the height
+        width=1600,  # Increase the width
+        height=1000,  # Increase the height
         margin={"r":0, "t":0, "l":0, "b":0},
         coloraxis_colorbar=dict(
             title="Reported number of people receiving ART",
@@ -40,4 +40,3 @@ st.header("ART Coverage by Country")
 
 fig_art_coverage = plot_map(hiv_df, 'Reported number of people receiving ART', 'matter')
 st.plotly_chart(fig_art_coverage)
-fig.show()
