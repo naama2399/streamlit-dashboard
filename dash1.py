@@ -15,7 +15,7 @@ df = pd.read_csv('AIDS_Classification.csv')
 print(df.isna().sum())
 
 # Clean column names by replacing non-breaking spaces with regular spaces
-hiv_df.columns = hiv_df.columns.str_replace('\xa0', ' ')
+hiv_df.columns = hiv_df.columns.str.replace('\xa0', ' ')
 
 # Get a list of all countries from Plotly's gapminder dataset
 all_countries = px.data.gapminder()['country'].unique()
