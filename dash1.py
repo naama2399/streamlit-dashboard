@@ -39,23 +39,7 @@ def plot_map(df, col, pal):
     # Create choropleth map using Plotly Express
     fig = px.choropleth(df, locations="Country", locationmode='country names',
                         color=col, hover_name="Country",
-                        title='ART Coverage by Country', color_continuous_scale=pal, width=1000, height=600)
-
-    fig.update_layout(
-        autosize=True,
-        margin=dict(l=50, r=50, t=50, b=50),
-        geo=dict(
-            showframe=False,
-            showcoastlines=False,
-            projection_type='equirectangular'
-        )
-    )
-    
-    fig.update_geos(
-        fitbounds="locations", # Ensure map fits all data points
-        visible=False  # Hide geo frame to make the map bigger
-    )
-
+                        title='ART Coverage by Country', color_continuous_scale=pal)
     return fig
 
 def update_cumulative_incidence_curve():
