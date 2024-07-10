@@ -1,3 +1,4 @@
+import streamlit as st
 import pandas as pd
 import plotly.express as px
 
@@ -33,6 +34,9 @@ def plot_map(df, col, pal):
     )
     return fig
 
-# Plot the map
+# Streamlit app
+st.title("Analyzing the Impact of ART Protocols on AIDS Progression")
+st.header("ART Coverage by Country")
+
 fig_art_coverage = plot_map(hiv_df, 'Reported number of people receiving ART', 'matter')
-fig_art_coverage.show()
+st.plotly_chart(fig_art_coverage)
