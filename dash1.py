@@ -50,6 +50,7 @@ def plot_map(df, col, pal):
     fig = px.choropleth(df, locations="Country", locationmode='country names',
                         color=col, hover_name="Country",
                         title='ART Coverage by Country', color_continuous_scale=pal)
+    fig.update_layout(margin={"r":0,"t":0,"l":0,"b":0})
     return fig
 
 
