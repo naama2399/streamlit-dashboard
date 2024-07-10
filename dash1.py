@@ -29,9 +29,19 @@ def plot_map(df, col, pal):
                         color=col, hover_name="Country",
                         title='ART Coverage by Country', color_continuous_scale=pal)
     
-    # Adjust projection and scale to make the countries appear larger
-    fig.update_geos(projection_scale=1.2)  # Increase this value to enlarge the map
-    fig.update_layout(width=1500, height=800, margin={"r":0,"t":50,"l":0,"b":0})
+    # Adjust the layout to make the countries appear larger
+    fig.update_geos(
+        projection_type="natural earth",
+        projection_scale=1.5,  # Adjust this value to make countries larger
+        center=dict(lat=0, lon=0)
+    )
+    
+    fig.update_layout(
+        width=1000,  # Adjust this value to fit the Streamlit app layout
+        height=600,  # Adjust this value to change the aspect ratio
+        margin={"r":0,"t":50,"l":0,"b":0}
+    )
+    
     return fig
 
 def update_cumulative_incidence_curve():
