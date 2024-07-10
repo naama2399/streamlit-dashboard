@@ -47,8 +47,8 @@ def plot_map(df, col, pal):
         autosize=False,
         width=1500,
         height=800,
-        margin={"r":0,"t":100,"l":0,"b":0},  # Adjusted margin settings
-        title_font_size=24,  # Adjust the title font size here
+        margin={"r":0,"t":50,"l":0,"b":0},  # Adjusted margin settings
+        title_font_size=48,  # Adjust the title font size here
         coloraxis_colorbar=dict(
             title="Reported number of people receiving ART",
             thicknessmode="pixels", thickness=15,
