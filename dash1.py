@@ -95,11 +95,13 @@ def update_cumulative_incidence_curve():
     return fig_cumulative_incidence_curve
 
 # Streamlit app
-# Add a main image with a larger width
-st.image("picture_vizu.jpeg", width=1200)
 
 # Add a title for your project
 st.title("Analyzing the Impact of ART Protocols on AIDS Progression")
+
+# Add a main image with a larger width
+st.image("picture_vizu.jpeg", width=1200)
+
 
 # Add text before the map
 st.write("This graph shows antiretroviral therapy (ART) coverage by country around the world. The data shows the reported number of people receiving ART in each country.")
