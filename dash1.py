@@ -44,7 +44,7 @@ def plot_map(df, col, pal):
                         color=col, hover_name="Country",
                         title='ART Coverage by Country', color_continuous_scale=pal,width=1500)
 
-    )
+
     return fig
 
 def update_cumulative_incidence_curve():
