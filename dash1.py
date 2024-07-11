@@ -44,8 +44,8 @@ def plot_map(df, col, pal):
         autosize=False,
         width=1500,
         height=800,
-        margin={"r":0,"t":50,"l":0,"b":0},  # Adjusted margin settings
-        title_font_size=35,  # Adjust the title font size here
+        margin={"r":0,"t":50,"l":0,"b":0},
+        title_font_size=35,
         coloraxis_colorbar=dict(
             title="Reported number of people receiving ART",
             thicknessmode="pixels", thickness=15,
@@ -111,6 +111,8 @@ st.header("AIDS Progression Analysis")
 
 # Create a selectbox for selecting ART protocol
 st.markdown("Please select an ART Protocol and type of white blood cell to see the scatter plot.")
+st.markdown("The graph shows the CD4\CD8 values versus the values after 20 weeks for a particular ART protocol.")
+
 protocol = st.selectbox(
     "Select ART Protocol",
     options=[
