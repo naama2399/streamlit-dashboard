@@ -104,7 +104,7 @@ st.title("Analyzing the Impact of ART Protocols on AIDS Progression")
 st.image("picture_vizu.jpeg", width=1200)
 
 # Add text before the map
-st.markdown("## This graph shows antiretroviral therapy (ART) coverage by country around the world. The data shows the reported number of people receiving ART in each country.")
+st.markdown("This graph shows antiretroviral therapy (ART) coverage by country around the world. The data shows the reported number of people receiving ART in each country.")
 
 fig_art_coverage = plot_map(hiv_df, 'Reported number of people receiving ART', 'matter')
 st.plotly_chart(fig_art_coverage, use_container_width=True)
@@ -113,7 +113,7 @@ st.plotly_chart(fig_art_coverage, use_container_width=True)
 st.header("AIDS Progression Analysis")
 
 # Create a selectbox for selecting ART protocol
-st.markdown("Please select an ART Protocol to see the analysis.")
+st.markdown("Please select an ART Protocol and type of white blood cell to see the scatter plot.")
 protocol = st.selectbox(
     "Select ART Protocol",
     options=[
@@ -128,8 +128,6 @@ protocol = st.selectbox(
 # Filter the dataframe based on the selected protocol
 filtered_df = df[df['trt'] == protocol]
 
-# Add a selectbox for CD4 or CD8
-st.markdown("Please select a type of white blood cell to see the scatter plot.")
 marker_type = st.selectbox(
     "Choose a type of white blood cell",
     options=[
@@ -183,7 +181,7 @@ st.plotly_chart(scatter_fig, use_container_width=True)
 
 # Display cumulative incidence curve
 st.header("Cumulative Incidence Analysis")
-st.markdown("This graph shows the cumulative incidence curves for different ART protocols.")
+st.markdown("The graph shows the cumulative mortality curves (Cumulative Incidence) for each of the ART protocols over time..")
 fig_cumulative_incidence_curve = update_cumulative_incidence_curve()
 st.plotly_chart(fig_cumulative_incidence_curve, use_container_width=True)
 
