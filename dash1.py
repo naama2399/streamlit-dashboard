@@ -13,7 +13,6 @@ print(missing_values_count)
 
 df = pd.read_csv('AIDS_Classification.csv')
 print(df.isna().sum())
-
 # Get a list of all countries from Plotly's gapminder dataset
 all_countries = px.data.gapminder()['country'].unique()
 all_countries_df = pd.DataFrame({'Country': all_countries})
@@ -111,7 +110,6 @@ st.header("AIDS Progression Analysis")
 
 # Create a selectbox for selecting ART protocol
 st.markdown("Please select an ART Protocol and type of white blood cell to see the scatter plot.")
-st.markdown("The graph shows the CD4\CD8 values versus the values after 20 weeks for a particular ART protocol.")
 
 protocol = st.selectbox(
     "Select ART Protocol",
@@ -135,6 +133,8 @@ marker_type = st.selectbox(
     ],
     format_func=lambda x: x['label']
 )['value']
+
+st.markdown("The graph shows the CD4\CD8 values versus the values after 20 weeks for a particular ART protocol.")
 
 # Create scatter plots for the selected marker type
 if marker_type == 'CD4':
