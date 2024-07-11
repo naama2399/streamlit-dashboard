@@ -15,7 +15,7 @@ df = pd.read_csv('AIDS_Classification.csv')
 print(df.isna().sum())
 
 # Clean column names by replacing non-breaking spaces with regular spaces
-hiv_df.columns = hiv_df.columns.str.replace('\xa0', ' ')
+# hiv_df.columns = hiv_df.columns.str.replace('\xa0', ' ')
 
 # Get a list of all countries from Plotly's gapminder dataset
 all_countries = px.data.gapminder()['country'].unique()
@@ -181,7 +181,7 @@ st.plotly_chart(scatter_fig, use_container_width=True)
 
 # Display cumulative incidence curve
 st.header("Cumulative Incidence Analysis")
-st.markdown("The graph shows the cumulative mortality curves (Cumulative Incidence) for each of the ART protocols over time..")
+st.markdown("The graph shows the cumulative mortality curves (Cumulative Incidence) for each of the ART protocols over time.")
 fig_cumulative_incidence_curve = update_cumulative_incidence_curve()
 st.plotly_chart(fig_cumulative_incidence_curve, use_container_width=True)
 
