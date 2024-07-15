@@ -239,7 +239,6 @@ def update_bar_plot(selected_protocol, variable):
 
     return bar_fig
 
-st.markdown("This graph shows the infection rate versus the selected clinical variable.")
 bar_plot_fig = update_bar_plot(protocol, clinical_variable)
 st.plotly_chart(bar_plot_fig, use_container_width=True)
 
